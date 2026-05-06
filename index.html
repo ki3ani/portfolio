@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kenneth Kimani — Senior Software Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Fraunces:ital,wght@0,300;0,600;0,900;1,300;1,600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #0f1629;
+    --surface2: #151d35;
+    --border: #1e2d54;
+    --accent: #4f8ef7;
+    --accent2: #a78bfa;
+    --accent3: #34d399;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --dim: #334155;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Grid background */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79,142,247,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,142,247,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 80px 0 60px;
+    position: relative;
+  }
+
+  .prompt {
+    color: var(--accent3);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.1s;
+  }
+
+  .prompt span { color: var(--muted); }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(42px, 8vw, 72px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.2s;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .subtitle {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 13px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.35s;
+  }
+
+  .subtitle strong { color: var(--accent2); font-weight: 500; }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.45s;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--surface);
+    letter-spacing: 0.05em;
+  }
+
+  .badge .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent3);
+    animation: pulse 2s infinite;
+  }
+
+  .links {
+    display: flex;
+    gap: 20px;
+    margin-top: 32px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.55s;
+  }
+
+  .links a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .links a:hover { border-color: var(--accent); }
+
+  /* ── SECTION HEADERS ── */
+  .section { padding: 60px 0; border-top: 1px solid var(--border); }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent3);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 32px;
+  }
+
+  /* ── PROJECT CARDS ── */
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .project-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+  }
+
+  .project-number {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+
+  .project-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .project-subtitle {
+    color: var(--accent);
+    font-size: 12px;
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .tag {
+    padding: 3px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 0.04em;
+  }
+
+  .project-body {
+    color: #94a3b8;
+    font-size: 13px;
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+
+  .feature-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  @media (max-width: 600px) {
+    .feature-list { grid-template-columns: 1fr; }
+  }
+
+  .feature-list li {
+    font-size: 12px;
+    color: var(--muted);
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .feature-list li::before {
+    content: '▸';
+    position: absolute; left: 0;
+    color: var(--accent3);
+    font-size: 10px;
+  }
+
+  /* ── IMPACT METRIC ── */
+  .impact {
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: rgba(52, 211, 153, 0.05);
+    border: 1px solid rgba(52, 211, 153, 0.2);
+    border-radius: 3px;
+    font-size: 12px;
+    color: var(--accent3);
+  }
+
+  .impact strong { font-size: 20px; font-family: 'Fraunces', serif; }
+
+  /* ── SKILLS ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .skill-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+  }
+
+  .skill-group-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .skill-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .skill-item {
+    font-size: 12px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .skill-item::before {
+    content: '';
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 24px; }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 1px;
+    background: linear-gradient(180deg, var(--accent), transparent);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 36px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -28px; top: 8px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(79,142,247,0.5);
+  }
+
+  .timeline-date {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .timeline-role {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .timeline-company {
+    color: var(--accent);
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .timeline-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .timeline-bullets li {
+    font-size: 12px;
+    color: #94a3b8;
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .timeline-bullets li::before {
+    content: '▸';
+    position: absolute; left: 0;
+    color: var(--accent3);
+    font-size: 10px;
+    top: 2px;
+  }
+
+  /* ── COMMUNITY ── */
+  .community-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 600px) {
+    .community-grid { grid-template-columns: 1fr; }
+  }
+
+  .community-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+
+  .community-card:hover { border-color: var(--accent2); }
+
+  .community-icon { font-size: 24px; margin-bottom: 10px; }
+  .community-title { font-size: 14px; color: var(--text); font-weight: 500; margin-bottom: 6px; }
+  .community-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .community-stat { margin-top: 12px; font-size: 20px; font-family: 'Fraunces', serif; color: var(--accent3); }
+
+  /* ── CTA ── */
+  .cta-section {
+    padding: 60px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .cta-section h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+
+  .cta-section p { color: var(--muted); font-size: 13px; margin-bottom: 28px; }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 3px;
+    transition: background 0.2s, transform 0.2s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .cta-btn:hover { background: #6fa3f9; transform: translateY(-1px); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="prompt">$ <span>cat /home/kenneth/profile.md</span></div>
+    <h1>Kenneth <em>Kimani</em></h1>
+    <div class="subtitle">
+      Senior Software Engineer · <strong>AI & Agentic Systems</strong> · Nairobi, KE (Remote)
+    </div>
+    <div class="badges">
+      <span class="badge"><span class="dot"></span> Available for work</span>
+      <span class="badge">AWS Community Builder</span>
+      <span class="badge">Open Source Contributor</span>
+      <span class="badge">50k+ blog readers</span>
+    </div>
+    <div class="links">
+      <a href="https://github.com/ki3ani" target="_blank">github.com/ki3ani</a>
+      <a href="https://dev.to/ki3ani" target="_blank">dev.to/ki3ani</a>
+      <a href="https://kimsworld.bearblog.dev" target="_blank">blog</a>
+      <a href="mailto:kimanim68@gmail.com">kimanim68@gmail.com</a>
+    </div>
+  </header>
+
+  <!-- PROJECTS -->
+  <section class="section reveal">
+    <div class="section-label">// featured projects</div>
+    <h2>AI Systems I've Shipped</h2>
+
+    <!-- PROJECT 1 -->
+    <div class="project-card reveal">
+      <div class="project-number">PROJECT_01</div>
+      <div class="project-title">Job Hunting AI Agent</div>
+      <div class="project-subtitle">AWS Bedrock · Claude 3 Haiku · FastAPI · ECS Fargate · Terraform</div>
+      <div class="tags">
+        <span class="tag">AWS Bedrock</span>
+        <span class="tag">Claude 3 Haiku</span>
+        <span class="tag">FastAPI</span>
+        <span class="tag">Telegram Bot</span>
+        <span class="tag">AWS SES</span>
+        <span class="tag">ECS Fargate</span>
+        <span class="tag">Terraform</span>
+        <span class="tag">GitHub Actions</span>
+      </div>
+      <div class="project-body">
+        An autonomous job-hunting agent that aggregates listings from 3+ job boards in parallel, scores each against a candidate profile using Claude 3 Haiku via AWS Bedrock, and delivers curated HTML email reports every 6 hours — with zero daily manual effort.
+      </div>
+      <ul class="feature-list">
+        <li>Multi-source parallel aggregation (JSearch, Remotive, Arbeitnow)</li>
+        <li>Claude 3 Haiku AI scoring: match %, Kenya eligibility, skill gaps</li>
+        <li>Telegram bot interface for conversational control</li>
+        <li>AWS SES email digests with full deduplication</li>
+        <li>Full IaC with Terraform → ECS Fargate</li>
+        <li>CI/CD: GitHub Actions → ECR → ECS zero-downtime</li>
+      </ul>
+      <div class="impact">
+        Eliminated <strong>~45 min/day</strong> of manual job searching. Runs autonomously on Fargate spot — near-zero compute cost.
+      </div>
+    </div>
+
+    <!-- PROJECT 2 -->
+    <div class="project-card reveal">
+      <div class="project-number">PROJECT_02 · GKE Turns 10 Hackathon</div>
+      <div class="project-title">Multi-Agent E-Commerce AI System</div>
+      <div class="project-subtitle">Google Gemini · MCP Protocol · Agent-to-Agent (A2A) · GKE · gRPC</div>
+      <div class="tags">
+        <span class="tag">Google Gemini</span>
+        <span class="tag">MCP</span>
+        <span class="tag">A2A Protocol</span>
+        <span class="tag">GKE</span>
+        <span class="tag">gRPC</span>
+        <span class="tag">Cloud SQL</span>
+        <span class="tag">Flask</span>
+      </div>
+      <div class="project-body">
+        An autonomous "AI brain" layered over an e-commerce microservices app. Four specialized Gemini agents communicate via MCP and A2A protocols to sense real-time user behavior, generate marketing copy, personalize recommendations, and handle customer support — all without touching the original codebase.
+      </div>
+      <ul class="feature-list">
+        <li>MCP Toolbox Server: shared real-time context layer for all agents</li>
+        <li>Analyst Agent: detects behavioral trends, delegates via A2A</li>
+        <li>Marketing Agent: generates & publishes ad copy autonomously</li>
+        <li>Recommendation Agent: Gemini + gRPC replaces original service</li>
+        <li>Support Agent: grounded chatbot, hallucination-resistant</li>
+        <li>Mission Control dashboard: live system visualization</li>
+      </ul>
+      <div class="impact">
+        <strong>Fully closed-loop</strong> autonomous AI system — senses → reasons → acts with no human intervention required.
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="section reveal">
+    <div class="section-label">// technical stack</div>
+    <h2>Skills</h2>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <div class="skill-group-label">AI & Agentic</div>
+        <div class="skill-items">
+          <span class="skill-item">Claude API / Claude Code</span>
+          <span class="skill-item">LangChain / LangGraph</span>
+          <span class="skill-item">MCP Protocol</span>
+          <span class="skill-item">RAG Pipelines</span>
+          <span class="skill-item">AWS Bedrock</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Backend</div>
+        <div class="skill-items">
+          <span class="skill-item">Python (expert)</span>
+          <span class="skill-item">Django / FastAPI / Flask</span>
+          <span class="skill-item">Celery / Redis</span>
+          <span class="skill-item">PostgreSQL / MongoDB</span>
+          <span class="skill-item">Elasticsearch</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Cloud & Infra</div>
+        <div class="skill-items">
+          <span class="skill-item">AWS (Lambda, S3, SES, ECS)</span>
+          <span class="skill-item">Docker / Kubernetes / GKE</span>
+          <span class="skill-item">Terraform</span>
+          <span class="skill-item">GitHub Actions (CI/CD)</span>
+          <span class="skill-item">Microservices</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Frontend & Payments</div>
+        <div class="skill-items">
+          <span class="skill-item">React / Next.js</span>
+          <span class="skill-item">TypeScript</span>
+          <span class="skill-item">Tailwind CSS</span>
+          <span class="skill-item">M-Pesa Integration</span>
+          <span class="skill-item">Stripe / OAuth2 / JWT</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="section reveal">
+    <div class="section-label">// work history</div>
+    <h2>Experience</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-date">Mar 2024 – Dec 2025</div>
+        <div class="timeline-role">Software Engineer</div>
+        <div class="timeline-company">Savannah Informatics · Nairobi, KE</div>
+        <ul class="timeline-bullets">
+          <li>Reduced invoicing generation time from 25s → 4s (84%) via PostgreSQL optimization and async task processing</li>
+          <li>Architected fault-tolerant inventory system with Celery/Redis bulk upload and auto-retry</li>
+          <li>Led containerization of legacy modules into microservices using Docker and Kubernetes</li>
+          <li>Built Medical Terminology Service on OCL patterns with Elasticsearch sub-second retrieval</li>
+          <li>Mentored junior devs, conducted code reviews, authored RFCs for architectural standards</li>
+        </ul>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">Jun 2020 – Dec 2023</div>
+        <div class="timeline-role">Software Engineer</div>
+        <div class="timeline-company">Tengeza Studios · Nairobi, KE</div>
+        <ul class="timeline-bullets">
+          <li>Backend lead for multiple client startups — Django, FastAPI, Flask REST APIs at high concurrency</li>
+          <li>Integrated M-Pesa & Stripe payment gateways with OAuth2/JWT auth for fintech clients</li>
+          <li>Owned full-stack lifecycle: Python/Django backends + React frontends end-to-end</li>
+          <li>Technical lead on MVPs — translated business requirements directly into production code</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMUNITY -->
+  <section class="section reveal">
+    <div class="section-label">// community & open source</div>
+    <h2>Community</h2>
+    <div class="community-grid">
+      <div class="community-card">
+        <div class="community-icon">☁️</div>
+        <div class="community-title">AWS Community Builder</div>
+        <div class="community-desc">Selected for technical expertise in the Serverless track. Writes deep-dives on serverless architecture and cloud engineering for the AWS community.</div>
+      </div>
+      <div class="community-card">
+        <div class="community-icon">🤖</div>
+        <div class="community-title">Open Source: Block/Goose</div>
+        <div class="community-desc">Contributed core features to the Goose AI agent framework — focused on LLM tool-use, context management, and developer productivity automation.</div>
+        <div style="margin-top:8px"><a href="https://github.com/block/goose" target="_blank" style="color:var(--accent);font-size:11px;text-decoration:none;">github.com/block/goose →</a></div>
+      </div>
+      <div class="community-card">
+        <div class="community-icon">✍️</div>
+        <div class="community-title">Technical Writing</div>
+        <div class="community-desc">Author at dev.to/ki3ani and kimsworld.bearblog.dev — covering AWS serverless, Python performance, and cloud engineering.</div>
+        <div class="community-stat">50k+ views</div>
+      </div>
+      <div class="community-card">
+        <div class="community-icon">🎓</div>
+        <div class="community-title">Strathmore University</div>
+        <div class="community-desc">Bachelor of Business Information Technology. Foundation in both technical implementation and business context — directly useful for product-focused engineering roles.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-section reveal">
+    <h2>Let's build together.</h2>
+    <p>Available for remote Senior Software Engineer roles. Fast shipping, practical solutions, real AI systems.</p>
+    <a href="mailto:kimanim68@gmail.com" class="cta-btn">
+      <span>→</span> kimanim68@gmail.com
+    </a>
+  </div>
+
+</div>
+
+<script>
+  // Intersection Observer for reveal animations
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
